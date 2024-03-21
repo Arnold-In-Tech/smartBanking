@@ -14,7 +14,7 @@ Developing a tool that establishes links between banking channels will allow cus
 
 We have 6 models: `Central_bank`, `Bank`, `Current`, `Saving`, `Loan` and `Customer`. 
 
-The `Central_bank` has many `Bank`s; a `Bank` has many account types (`Current`, `Saving`, `Loan`); a `Customer` has many account types (`Current`, `Saving`, `Loan`). The account types (`Current`, `Saving`, `Loan`) belong to a `bank` and to a `customer`. `Bank` - `Customer` is a many-to-many relationship.  
+The `Central_bank` has many `Bank`s ; a `Bank` has many account types (`Current`, `Saving`, `Loan`); a `Customer` has many account types (`Current`, `Saving`, `Loan`). The account types (`Current`, `Saving`, `Loan`) belong to a `bank` and to a `customer`. `Bank` - `Customer` is a many-to-many relationship.  
 
 
 # Entity Relationship Diagram 
