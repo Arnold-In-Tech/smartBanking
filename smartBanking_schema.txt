@@ -1,0 +1,165 @@
+
+central_bank:
+	- id
+	- name
+	- central_reserve (10%)
+	
+Bank:
+	- id
+	- name
+	- branch
+	- bank_reserve (90%)
+	- central_bank_id
+
+
+	
+Loan:
+	- id
+	- account_no
+	- loan_type 	(mortgages, car loans, business, personal)
+	- loan_amount
+	- duration
+	- balance
+	- bank_id
+	- customer_id
+
+Current:
+	- id
+	- account_no
+	- balance
+	- bank_id
+	- customer_id
+	
+	
+Savings:
+	- id
+	- account_no
+	- balance
+	- bank_id
+	- customer_id
+
+Customer:
+	- customer_id
+	- name
+	- email
+	- address
+
+	
+	
+
+
+# Central banks: - regulate the money supply
+		  - lend to commercial banks
+
+# Loan : Loan status(): e.g. this amount paid		  
+
+
+# ======================================================
+
+# SChema
+- A central bank can have many banks (one to many) - bank belongs to central bank
+- A bank can have many customers, and A customer can have many banks & a/cs (many to many)
+
+JOIN (many to many)
+- Banks and customers are joined by accounts
+- A bank/customer can share three account types (current, saving, loan)
+
+
+
+
+# ==========================  Setting Up the Database
+sqlite3 bank_database.db
+
+
+# ==========================  Creating tables
+# N/B: Table name has to be in plural
+
+# 1.=== central_bank table
+
+sql = """
+    CREATE TABLE IF NOT EXISTS central_bank (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100),
+    central_reserve INTEGER)
+"""
+CREATE TABLE IF NOT EXISTS central_bank (id INTEGER PRIMARY KEY, name VARCHAR(100), central_reserve INTEGER);
+
+
+# 2.=== Bank table
+
+sql = """
+    CREATE TABLE IF NOT EXISTS banks (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(300),
+    branch VARCHAR(300),
+    bank_reserve FLOAT,
+    central_bank_id INTEGER,
+    FOREIGN KEY (central_bank_id) REFERENCES central_bank(id))
+
+"""
+
+
+# 3.=== Current table
+
+sql = """
+    CREATE TABLE IF NOT EXISTS currents (
+    id INTEGER PRIMARY KEY,
+    account_no VARCHAR(300),
+    balance FLOAT,
+    bank_id INTEGER,
+    customer_id INTEGER,
+    FOREIGN KEY (bank_id) REFERENCES banks(id),
+    FOREIGN KEY (customer_id) REFERENCES customers(id))
+"""
+
+
+# 4.=== Saving table
+
+sql = """
+    CREATE TABLE IF NOT EXISTS savings (
+    id INTEGER PRIMARY KEY,
+    account_no VARCHAR(300),
+    balance FLOAT,
+    bank_id INTEGER,
+    customer_id INTEGER,
+    FOREIGN KEY (bank_id) REFERENCES banks(id),
+    FOREIGN KEY (customer_id) REFERENCES customers(id))
+"""
+
+
+# 5.=== Loan table
+
+sql = """
+    CREATE TABLE IF NOT EXISTS loans (
+    id INTEGER PRIMARY KEY,
+    account_no VARCHAR(300),
+    loan_type VARCHAR(300),
+    loan_amount FLOAT,
+    duration VARCHAR(300)
+    paid_amount FLOAT,
+    bank_id INTEGER,
+    customer_id INTEGER,
+    FOREIGN KEY (bank_id) REFERENCES banks(id),
+    FOREIGN KEY (customer_id) REFERENCES customers(id)))
+"""
+
+
+# 6.=== Customer table
+
+sql = """
+    CREATE TABLE IF NOT EXISTS customers (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(300),
+    email VARCHAR(300),
+    address VARCHAR(300))
+"""
+
+
+
+# ======================================================
+
+# ==========================  Inserting data to tables
+# === Insert Data:
+
+
+
