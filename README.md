@@ -86,7 +86,7 @@ python3 ./lib/cli.py
 - Add feature to calculate interest on loans
 - Add cash withdrawal and deposit methods
 - Add feature to auto-update balance on cash withdrawal, deposit, and loan payment
-
+- Add feature to generate transaction history.
 
 # Author
 Arnold .A.
