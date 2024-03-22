@@ -21,12 +21,12 @@ We have 6 models: `Central_bank`, `Bank`, `Current`, `Saving`, `Loan` and `Custo
 The `Central_bank` has many `Bank`s ; a `Bank` has many account types (`Current`, `Saving`, `Loan`); a `Customer` has many account types (`Current`, `Saving`, `Loan`). The account types (`Current`, `Saving`, `Loan`) belong to a `bank` and to a `customer`. `Bank` - `Customer` is a many-to-many relationship.  
 ## Application features
 - Create, Read, Update, Delete banks, customers and accounts from the database.
-- Add new banks accounts to new and existing customers to the database.
+- Add new banks accounts for new and existing customers to the database.
 - View a list of all banks, customers, and accounts.
 - View accounts related to a specific bank.
 - View accounts related to a specific customer.
 - View accounts balance related to a specific customer.
-- Calculate a customers' Net-worth based balances existing in all bank accounts. N/B (Net-worth = (Current balance + Savings balance) - Loan balance)
+- Calculate a customers' Net-worth based on balances existing in all their bank accounts. N/B (Net-worth = (Current balance + Savings balance) - Loan balance)
 
 
 # Instructions
