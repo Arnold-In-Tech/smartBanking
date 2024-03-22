@@ -6,8 +6,10 @@ Customers want a friction-less working relationship with their financial institu
 ## Solution statement 
 Developing a tool that establishes links between banking channels will allow customers to seamlessly access their various bank accounts from a single access point. Information access will also improve a customers financial awareness and can consequntly help the banks provide better services, increase assets, and drive profitability.
 
+## Technology stack
 ![Static Badge](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 ![Static Badge](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Static Badge](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)
 
 # Entity Relationship Diagram 
 ![Entity Relationship Diagram](./images/smartBanking.png?raw=true)
