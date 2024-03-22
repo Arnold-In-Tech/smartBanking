@@ -117,10 +117,12 @@ class Central_bank:
 
     @classmethod
     def find_by_id(cls, id):
-        """Return Central_bank object corresponding to the table row matching the specified primary key"""
+        """
+        Return Central_bank object corresponding to the table row matching the specified primary key
+        """
         sql = """
             SELECT *
-            FROM central_bank
+            FROM central_banks
             WHERE id = ?
         """
 

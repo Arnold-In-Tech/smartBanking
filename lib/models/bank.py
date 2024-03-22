@@ -8,17 +8,16 @@ class Bank:
     # Dictionary of objects saved to the database.
     all = {}
 
-    def __init__(self, name, branch, bank_reserve, central_bank_id, id=None):
+    def __init__(self, name, bank_reserve, central_bank_id, id=None):
         self.id = id
         self.name = name
-        self.branch = branch
         self.bank_reserve = bank_reserve
         self.central_bank_id = central_bank_id
 
     def __repr__(self):
         return (
-            f"<Bank {self.id}: {self.name}, {self.branch}, {self.bank_reserve} " +
-            f"Central_bank ID: {self.central_bank_id}>"
+            f"<Bank {self.id}: Name: {self.name}, Bank reserve (Kshs): {self.bank_reserve} " +
+            f" Central_bank ID: {self.central_bank_id}>"
         )
 
     @property
@@ -32,19 +31,6 @@ class Bank:
         else:
             raise ValueError(
                 "Name must be a non-empty string"
-            )
-
-    @property
-    def branch(self):
-        return self._branch
-
-    @branch.setter
-    def branch(self, branch):
-        if isinstance(branch, str) and len(branch):
-            self._branch = branch
-        else:
-            raise ValueError(
-                "branch must be a non-empty string"
             )
 
 
@@ -84,7 +70,6 @@ class Bank:
             CREATE TABLE IF NOT EXISTS banks (
             id INTEGER PRIMARY KEY,
             name VARCHAR(300),
-            branch VARCHAR(300),
             bank_reserve FLOAT,
             central_bank_id INTEGER,
             FOREIGN KEY (central_bank_id) REFERENCES central_bank(id))
@@ -107,16 +92,16 @@ class Bank:
 
     def save(self):
         """ 
-        Insert a new row with the name, branch, bank_reserve, and central_bank_id values of the current Bank object.
+        Insert a new row with the name, bank_reserve, and central_bank_id values of the current Bank object.
         Update object id attribute using the primary key value of new row.
         Save the object in local dictionary using table row's PK as dictionary key
         """
         sql = """
-                INSERT INTO banks (name, branch, bank_reserve, central_bank_id)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO banks (name, bank_reserve, central_bank_id)
+                VALUES (?, ?, ?)
         """
 
-        CURSOR.execute(sql, (self.name, self.branch, self.bank_reserve, self.central_bank_id))
+        CURSOR.execute(sql, (self.name, self.bank_reserve, self.central_bank_id))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
@@ -129,10 +114,10 @@ class Bank:
         """
         sql = """
             UPDATE banks
-            SET name = ?, branch = ?, bank_reserve = ?, central_bank_id = ?
+            SET name = ?, bank_reserve = ?, central_bank_id = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.branch, self.bank_reserve,
+        CURSOR.execute(sql, (self.name, self.bank_reserve,
                              self.central_bank_id, self.id))
         CONN.commit()
 
@@ -159,11 +144,11 @@ class Bank:
 
 
     @classmethod
-    def create(cls, name, branch, bank_reserve, central_bank_id):
+    def create(cls, name, bank_reserve, central_bank_id):
         """ 
         Initialize a new Bank instance and save the object to the database 
         """
-        bank = cls(name, branch,bank_reserve, central_bank_id)
+        bank = cls(name, bank_reserve, central_bank_id)
         bank.save()
         return bank
 
@@ -179,12 +164,11 @@ class Bank:
         if bank:
             # ensure attributes match row values in case local instance was modified
             bank.name = row[1]
-            bank.branch = row[2]
-            bank.bank_reserve = row[3]
-            bank.central_bank_id = row[4]
+            bank.bank_reserve = row[2]
+            bank.central_bank_id = row[3]
         else:
             # not in dictionary, create new instance and add to dictionary
-            bank = cls(row[1], row[2], row[3], row[4])
+            bank = cls(row[1], row[2], row[3])
             bank.id = row[0]
             cls.all[bank.id] = bank
         return bank
@@ -235,3 +219,66 @@ class Bank:
 
         row = CURSOR.execute(sql, (name,)).fetchone()
         return cls.instance_from_db(row) if row else None
+
+
+    # === for list_all_bank_accounts
+    def current_accounts(self):
+        """
+        returns a collection of all the accounts for the `Bank`
+        """
+        from models.current import Current
+        sql = """
+            SELECT * FROM currents
+            WHERE bank_id = ?
+        """
+        CURSOR.execute(sql, (self.id,),)
+
+        rows = CURSOR.fetchall()
+        return [
+            Current.instance_from_db(row) for row in rows
+        ]
+
+
+    def saving_accounts(self):
+        """
+        returns a collection of all the accounts for the `Bank`
+        """
+        from models.saving import Saving
+        sql = """
+            SELECT * FROM savings
+            WHERE bank_id = ?
+        """
+        CURSOR.execute(sql, (self.id,),)
+
+        rows = CURSOR.fetchall()
+        return [
+            Saving.instance_from_db(row) for row in rows
+        ]
+
+
+    def loan_accounts(self):
+        """
+        returns a collection of all the accounts for the `Bank`
+        """
+        from models.loan import Loan
+        sql = """
+            SELECT * FROM loans
+            WHERE bank_id = ?
+        """
+        CURSOR.execute(sql, (self.id,),)
+
+        rows = CURSOR.fetchall()
+        return [
+            Loan.instance_from_db(row) for row in rows
+        ]
+
+
+    def all_accounts(self):
+        """
+        should return a list of strings with all the accounts for this bank :
+        """
+        current_accs = [acc for acc in self.current_accounts()]
+        saving_accs = [acc for acc in self.saving_accounts()]
+        loan_accs = [acc for acc in self.loan_accounts()]
+        return current_accs + saving_accs + loan_accs 
+    

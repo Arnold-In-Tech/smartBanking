@@ -21,10 +21,9 @@ class Loan:
 
     def __repr__(self):
         return (
-            f"<Current {self.id}: {self.account_no}, {self.loan_type}, 
-            {self.loan_amount}, {self.duration}, {self.paid_amount}" +
-            f"Bank ID: {self.bank_id}, " +
-            f"Customer ID: {self.customer_id}>"
+            f"<Loan id {self.id}: Acc/No: {self.account_no}, loan type: {self.loan_type}, loan amount: {self.loan_amount}, duration: {self.duration}, amount paid: {self.paid_amount}" +
+            f" Bank ID: {self.bank_id}, " +
+            f" Customer ID: {self.customer_id}>\n"
         )
 
     @property
@@ -33,7 +32,7 @@ class Loan:
 
     @account_no.setter
     def account_no(self, account_no):
-        if isinstance(account_no, int) and len(account_no)==7:
+        if isinstance(account_no, int) and len(str(account_no))==7:
             self._account_no = account_no
         else:
             raise ValueError(
@@ -128,12 +127,13 @@ class Loan:
             account_no VARCHAR(300),
             loan_type VARCHAR(300),
             loan_amount FLOAT,
-            duration VARCHAR(300)
+            duration VARCHAR(300),
             paid_amount FLOAT,
             bank_id INTEGER,
             customer_id INTEGER,
             FOREIGN KEY (bank_id) REFERENCES banks(id),
-            FOREIGN KEY (customer_id) REFERENCES customers(id)))
+            FOREIGN KEY (customer_id) REFERENCES customers(id)
+            )
         """
         CURSOR.execute(sql)
         CONN.commit()
@@ -159,7 +159,7 @@ class Loan:
         Save the object in local dictionary using table row's PK as dictionary key
         """
         sql = """
-                INSERT INTO currents (account_no, loan_type, loan_amount, duration, paid_amount, bank_id, customer_id)
+                INSERT INTO loans (account_no, loan_type, loan_amount, duration, paid_amount, bank_id, customer_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
         """
 
@@ -226,16 +226,16 @@ class Loan:
         loan_acc = cls.all.get(row[0])
         if loan_acc:
             # ensure attributes match row values in case local instance was modified
-            loan_acc.account_no = row[1]
+            loan_acc.account_no = int(row[1])
             loan_acc.loan_type = row[2]
-            loan_acc.loan_amount = row[3]
+            loan_acc.loan_amount = float(row[3])
             loan_acc.duration = row[4]
-            loan_acc.paid_amount = row[5]
+            loan_acc.paid_amount = float(row[5])
             loan_acc.bank_id = row[6]
             loan_acc.customer_id = row[7]
         else:
             # not in dictionary, create new instance and add to dictionary
-            loan_acc = cls(row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+            loan_acc = cls(int(row[1]), row[2], float(row[3]), row[4], float(row[5]), row[6], row[7])
             loan_acc.id = row[0]
             cls.all[loan_acc.id] = loan_acc
         return loan_acc
@@ -268,4 +268,3 @@ class Loan:
 
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
-

@@ -18,9 +18,9 @@ class Current:
 
     def __repr__(self):
         return (
-            f"<Current {self.id}: {self.account_no}, {self.balance}" +
-            f"Bank ID: {self.bank_id}, " +
-            f"Customer ID: {self.customer_id}>"
+            f"<Current {self.id}: Acc/No: {self.account_no}, Balance: {self.balance}" +
+            f" Bank ID: {self.bank_id}, " +
+            f" Customer ID: {self.customer_id}>\n"
         )
 
     @property
@@ -29,7 +29,7 @@ class Current:
 
     @account_no.setter
     def account_no(self, account_no):
-        if isinstance(account_no, int) and len(account_no)==7:
+        if isinstance(account_no, int) and len(str(account_no))==7:
             self._account_no = account_no
         else:
             raise ValueError(
@@ -181,13 +181,13 @@ class Current:
         current_acc = cls.all.get(row[0])
         if current_acc:
             # ensure attributes match row values in case local instance was modified
-            current_acc.account_no = row[1]
-            current_acc.balance = row[2]
+            current_acc.account_no = int(row[1])
+            current_acc.balance = float(row[2])
             current_acc.bank_id = row[3]
             current_acc.customer_id = row[4]
         else:
             # not in dictionary, create new instance and add to dictionary
-            current_acc = cls(row[1], row[2], row[3], row[4])
+            current_acc = cls(int(row[1]), float(row[2]), row[3], row[4])
             current_acc.id = row[0]
             cls.all[current_acc.id] = current_acc
         return current_acc

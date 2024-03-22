@@ -18,9 +18,9 @@ class Saving:
 
     def __repr__(self):
         return (
-            f"<Saving {self.id}: {self.account_no}, {self.balance}" +
-            f"Bank ID: {self.bank_id}, " +
-            f"Customer ID: {self.customer_id}>"
+            f"<Saving {self.id}: Acc/No: {self.account_no}, Balance: {self.balance}" +
+            f" Bank ID: {self.bank_id}, " +
+            f" Customer ID: {self.customer_id}>\n"
         )
 
     @property
@@ -29,7 +29,7 @@ class Saving:
 
     @account_no.setter
     def account_no(self, account_no):
-        if isinstance(account_no, int) and len(account_no)==7:
+        if isinstance(account_no, int) and len(str(account_no))==7:
             self._account_no = account_no
         else:
             raise ValueError(
@@ -90,7 +90,8 @@ class Saving:
             bank_id INTEGER,
             customer_id INTEGER,
             FOREIGN KEY (bank_id) REFERENCES banks(id),
-            FOREIGN KEY (customer_id) REFERENCES customers(id))
+            FOREIGN KEY (customer_id) REFERENCES customers(id)
+            )
         """
         CURSOR.execute(sql)
         CONN.commit()
@@ -181,13 +182,13 @@ class Saving:
         saving_acc = cls.all.get(row[0])
         if saving_acc:
             # ensure attributes match row values in case local instance was modified
-            saving_acc.account_no = row[1]
-            saving_acc.balance = row[2]
+            saving_acc.account_no = int(row[1])
+            saving_acc.balance = float(row[2])
             saving_acc.bank_id = row[3]
             saving_acc.customer_id = row[4]
         else:
             # not in dictionary, create new instance and add to dictionary
-            saving_acc = cls(row[1], row[2], row[3], row[4])
+            saving_acc = cls(int(row[1]), float(row[2]), row[3], row[4])
             saving_acc.id = row[0]
             cls.all[saving_acc.id] = saving_acc
         return saving_acc

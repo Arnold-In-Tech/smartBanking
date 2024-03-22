@@ -15,7 +15,7 @@ class Customer:
 
     def __repr__(self):
         return (
-            f"<Customer {self.id}: {self.first_name}, {self.last_name}, {self.email}, {self.address}>"
+            f"<Customer {self.id}: first name- {self.first_name}, last name- {self.last_name}, email- {self.email}, address- {self.address}>"
         )
     
     @property
@@ -82,7 +82,8 @@ class Customer:
         sql = """
             CREATE TABLE IF NOT EXISTS customers (
             id INTEGER PRIMARY KEY,
-            name VARCHAR(300),
+            first_name VARCHAR(300),
+            last_name VARCHAR(300),
             email VARCHAR(300),
             address VARCHAR(300))
         """
@@ -209,3 +210,149 @@ class Customer:
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
 
+
+    def add_account(self, bank, acc_type):
+   
+        """
+        takes a bank (an instance of the `Bank` class) and an account type
+        creates a new account with the bank given the `bank_id`
+        """
+        from models.bank import Bank
+        from models.current import Current
+        from models.saving import Saving
+        from models.loan import Loan
+
+        if acc_type == "current":
+            if isinstance(bank, Bank):
+                account_no = input("Enter the account number: ")
+                balance = float(input("Enter the opening balance: "))
+                bank_id = bank.id
+                new_acc = Current.create(int(account_no), balance, bank_id, self.id)
+                return new_acc
+            else:
+                raise TypeError("bank must be an instance of Bank class;",
+                                "balance must be a float")
+
+        elif acc_type == "saving":
+            if isinstance(bank, Bank):
+                account_no = input("Enter the account number: ")
+                balance = float(input("Enter the opening balance: "))
+                bank_id = bank.id
+                new_acc = Saving.create(int(account_no), balance, bank_id, self.id)
+                return new_acc
+            else:
+                raise TypeError("bank must be an instance of Bank class;",
+                                "balance must be a float")            
+
+        elif acc_type == "loan":
+            if isinstance(bank, Bank):
+                account_no = input("Enter the account number: ")
+                loan_type = input("Enter the loan type: ")
+                loan_amount = float(input("Enter the loan amount: "))
+                duration = input("Enter the duration of the loan: ")
+                paid_amount = float(input("Enter the amount paid: "))
+                bank_id = bank.id
+                new_acc = Loan.create(int(account_no), loan_type, loan_amount, duration, paid_amount, bank_id, self.id)
+                return new_acc
+            else:
+                raise TypeError("bank must be an instance of Bank class;",
+                                "balance must be a float")
+        else:
+            raise TypeError("You can only open a current, saving, or loan account")
+
+        
+    # === for list_all_bank_accounts
+    def current_accounts(self):
+        """
+        returns a collection of all the accounts for the `Bank`
+        """
+        from models.current import Current
+        sql = """
+            SELECT * FROM currents
+            WHERE customer_id = ?
+        """
+        CURSOR.execute(sql, (self.id,),)
+
+        rows = CURSOR.fetchall()
+        return [
+            Current.instance_from_db(row) for row in rows
+        ]
+
+
+    def saving_accounts(self):
+        """
+        returns a collection of all the accounts for the `Bank`
+        """
+        from models.saving import Saving
+        sql = """
+            SELECT * FROM savings
+            WHERE customer_id = ?
+        """
+        CURSOR.execute(sql, (self.id,),)
+
+        rows = CURSOR.fetchall()
+        return [
+            Saving.instance_from_db(row) for row in rows
+        ]
+
+
+    def loan_accounts(self):
+        """
+        returns a collection of all the accounts for the `Bank`
+        """
+        from models.loan import Loan
+        sql = """
+            SELECT * FROM loans
+            WHERE customer_id = ?
+        """
+        CURSOR.execute(sql, (self.id,),)
+
+        rows = CURSOR.fetchall()
+        return [
+            Loan.instance_from_db(row) for row in rows
+        ]
+
+
+    def all_accounts(self):
+        """
+        should return a list of strings with all the accounts for this customer :
+        """
+        current_accs = [acc for acc in self.current_accounts()]
+        saving_accs = [acc for acc in self.saving_accounts()]
+        loan_accs = [acc for acc in self.loan_accounts()]
+        return current_accs + saving_accs + loan_accs 
+
+
+    def customer_banks_balance(self):
+        """
+        Display customer's balance in all bank accounts
+        """
+        from models.bank import Bank
+        current_accs = [acc for acc in self.current_accounts()]
+        saving_accs = [acc for acc in self.saving_accounts()]
+        loan_accs = [acc for acc in self.loan_accounts()]
+
+        curr = [f"Acc/No: {i.account_no} | Acc/Type: Current | Name: {self.full_name()} | Balance: {i.balance} | Bank: {Bank.find_by_id(i.bank_id).name}" for i in current_accs]
+        sav = [f"Acc/No: {i.account_no} | Acc/Type: Saving | Name: {self.full_name()} | Balance: {i.balance} | Bank: {Bank.find_by_id(i.bank_id).name}" for i in saving_accs]
+        loa = [f"Acc/No: {i.account_no} | Acc/Type: Loan | Name: {self.full_name()} | Balance: {i.loan_amount - i.paid_amount} | Bank: {Bank.find_by_id(i.bank_id).name} \n" for i in loan_accs]
+        return curr + sav + loa
+
+
+    def full_name(self):
+        """
+        returns the full name of the customer, with the first name and the last name  concatenated, Western style.
+        """
+        return f"{self.first_name} {self.last_name}"
+
+
+    def net_worth(self):
+        print("\nNet-worth = (Current balance + Savings balance) - Loan balance")
+        from models.bank import Bank
+        current_accs = [acc for acc in self.current_accounts()]
+        saving_accs = [acc for acc in self.saving_accounts()]
+        loan_accs = [acc for acc in self.loan_accounts()]
+
+        curr = sum([i.balance if len(current_accs) > 0 else 0 for i in current_accs ])
+        sav = sum([i.balance if len(saving_accs) > 0 else 0 for i in saving_accs ])
+        loa = sum([(i.loan_amount - i.paid_amount) if len(loan_accs) > 0 else 0 for i in loan_accs ])
+        return f"{self.full_name()}'s Net-worth is KSh. {curr + sav + loa} \n"

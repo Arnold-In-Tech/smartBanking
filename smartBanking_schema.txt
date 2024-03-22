@@ -11,7 +11,6 @@ Bank:
 	- bank_reserve (90%)
 	- central_bank_id
 
-
 	
 Loan:
 	- id
@@ -19,7 +18,7 @@ Loan:
 	- loan_type 	(mortgages, car loans, business, personal)
 	- loan_amount
 	- duration
-	- balance
+	- paid_amount
 	- bank_id
 	- customer_id
 
@@ -39,9 +38,10 @@ Savings:
 	- customer_id
 
 Customer:
-	- customer_id
-	- name
-	- email
+	- id
+    	- first_name
+    	- last_name 
+    	- email 
 	- address
 
 	
@@ -135,7 +135,7 @@ sql = """
     account_no VARCHAR(300),
     loan_type VARCHAR(300),
     loan_amount FLOAT,
-    duration VARCHAR(300)
+    duration VARCHAR(300),
     paid_amount FLOAT,
     bank_id INTEGER,
     customer_id INTEGER,
@@ -149,17 +149,11 @@ sql = """
 sql = """
     CREATE TABLE IF NOT EXISTS customers (
     id INTEGER PRIMARY KEY,
-    name VARCHAR(300),
+    first_name VARCHAR(300),
+    last_name VARCHAR(300),
     email VARCHAR(300),
     address VARCHAR(300))
 """
-
-
-
-# ======================================================
-
-# ==========================  Inserting data to tables
-# === Insert Data:
 
 
 
