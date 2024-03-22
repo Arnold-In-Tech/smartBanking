@@ -200,6 +200,21 @@ class Customer:
 
 
     @classmethod
+    def find_by_first_name(cls, first_name):
+        """
+        Return a Customer object corresponding to customer table row matching specified name
+        """
+        sql = """
+            SELECT *
+            FROM customers
+            WHERE first_name is ?
+        """
+
+        row = CURSOR.execute(sql, (first_name,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+
+
+    @classmethod
     def get_all(cls):
         """Return a list containing all Customer objects per row in the table"""
         sql = """

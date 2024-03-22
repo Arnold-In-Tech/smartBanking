@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from models.__init__ import CURSOR, CONN
+from models.central_bank import Central_bank
 from models.bank import Bank
 from models.customer import Customer
 
@@ -31,10 +32,11 @@ def find_bank_by_id():
 
 def create_bank():
     name = input("Enter the bank's name: ")
-    bank_reserve = input("Enter the bank reserve amount: ")
+    bank_reserve = float(input("Enter the bank reserve amount: "))
     central_bank_id = input("Enter the central bank id : ")
+    central_ins = Central_bank.find_by_id(central_bank_id)
     try:
-        bank = Bank.create(name, bank_reserve, central_bank_id)
+        bank = Bank.create(name, bank_reserve, central_ins.id)
         print(f'Success: {bank}')
     except Exception as exc:
         print("Error creating bank: ", exc)
@@ -46,7 +48,7 @@ def update_bank():
         try:
             name = input("Enter the bank's new name: ")
             bank.name = name
-            bank_reserve = input("Enter the bank's new reserve amount: ")
+            bank_reserve = float(input("Enter the bank's new reserve amount: "))
             bank.bank_reserve = bank_reserve
             central_bank_id = 1
 
@@ -74,9 +76,9 @@ def list_customers():
         print(customer)
 
 
-def find_customer_by_name():
+def find_customer_by_first_name():
     name = input("Enter the customer's name: ")
-    customer = Customer.find_by_name(name)
+    customer = Customer.find_by_first_name(name)
     print(customer) if customer else print(
         f'Customer {name} not found')
 

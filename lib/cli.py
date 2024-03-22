@@ -8,7 +8,7 @@ from helpers import (
     update_bank,
     delete_bank,
     list_customers,
-    find_customer_by_name,
+    find_customer_by_first_name,
     find_customer_by_id,
     create_customer,
     update_customer,
@@ -65,7 +65,7 @@ def main():
                 elif new_choice == "1":
                     list_customers()
                 elif new_choice == "2":
-                    find_customer_by_name()
+                    find_customer_by_first_name()
                 elif new_choice == "3":
                     find_customer_by_id()
                 elif new_choice == "4":
@@ -124,7 +124,7 @@ def customer_menu():
     print("Please select an option:")
     print("0. Go back")
     print("1. List all customers")
-    print("2. Find customer by name")
+    print("2. Find customer by first name")
     print("3. Find customer by id")
     print("4: Create customer")
     print("5: Update customer")
