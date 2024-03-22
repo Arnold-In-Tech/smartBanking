@@ -11,7 +11,7 @@ Developing a tool that establishes links between banking channels will allow cus
 ![Static Badge](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Static Badge](https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white)
 
-# Entity Relationship Diagram 
+# Entity relationship diagram 
 ![Entity Relationship Diagram](./images/smartBanking.png?raw=true)
 
 
