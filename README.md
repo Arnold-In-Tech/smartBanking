@@ -9,18 +9,15 @@ Developing a tool that establishes links between banking channels will allow cus
 ![Static Badge](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 ![Static Badge](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
-
-## Application features
-
-We have 6 models: `Central_bank`, `Bank`, `Current`, `Saving`, `Loan` and `Customer`. 
-
-The `Central_bank` has many `Bank`s ; a `Bank` has many account types (`Current`, `Saving`, `Loan`); a `Customer` has many account types (`Current`, `Saving`, `Loan`). The account types (`Current`, `Saving`, `Loan`) belong to a `bank` and to a `customer`. `Bank` - `Customer` is a many-to-many relationship.  
-
-
 # Entity Relationship Diagram 
 ![Entity Relationship Diagram](./images/smartBanking.png?raw=true)
 
+
 # Features
+We have 6 models: `Central_bank`, `Bank`, `Current`, `Saving`, `Loan` and `Customer`. 
+
+The `Central_bank` has many `Bank`s ; a `Bank` has many account types (`Current`, `Saving`, `Loan`); a `Customer` has many account types (`Current`, `Saving`, `Loan`). The account types (`Current`, `Saving`, `Loan`) belong to a `bank` and to a `customer`. `Bank` - `Customer` is a many-to-many relationship.  
+## Application features
 - Create, Read, Update, Delete banks, customers and accounts from the database.
 - Add new banks accounts to new and existing customers to the database.
 - View a list of all banks, customers, and accounts.
