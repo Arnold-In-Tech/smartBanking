@@ -1,4 +1,4 @@
-# smartBanking
+# smartBanking Application
 
 ## Project problem statement 
 Customers want a friction-less working relationship with their financial institutions. Often, they find it difficult to connect to various banking channels resulting in frustrating experiences.
